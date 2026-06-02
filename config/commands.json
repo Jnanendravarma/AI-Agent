@@ -1,0 +1,802 @@
+{
+  "open chrome": {
+    "type": "application",
+    "command": "start chrome",
+    "process_name": "chrome.exe",
+    "display_name": "Google Chrome",
+    "aliases": ["open google chrome", "launch chrome", "launch google chrome", "chrome"]
+  },
+  "close chrome": {
+    "type": "close",
+    "process_name": "chrome.exe",
+    "display_name": "Google Chrome",
+    "aliases": ["close google chrome", "terminate chrome", "exit chrome", "exit google chrome", "kill chrome"]
+  },
+  "is chrome running": {
+    "type": "status",
+    "process_name": "chrome.exe",
+    "display_name": "Google Chrome",
+    "aliases": ["is google chrome running", "check chrome status", "is chrome open", "is chrome running"]
+  },
+
+  "open edge": {
+    "type": "application",
+    "command": "start msedge",
+    "process_name": "msedge.exe",
+    "display_name": "Microsoft Edge",
+    "aliases": ["open microsoft edge", "launch edge", "launch microsoft edge", "edge"]
+  },
+  "close edge": {
+    "type": "close",
+    "process_name": "msedge.exe",
+    "display_name": "Microsoft Edge",
+    "aliases": ["close microsoft edge", "terminate edge", "exit edge", "exit microsoft edge"]
+  },
+  "is edge running": {
+    "type": "status",
+    "process_name": "msedge.exe",
+    "display_name": "Microsoft Edge",
+    "aliases": ["is microsoft edge running", "check edge status", "is edge open"]
+  },
+
+  "open firefox": {
+    "type": "application",
+    "command": "start firefox",
+    "process_name": "firefox.exe",
+    "display_name": "Firefox",
+    "aliases": ["launch firefox", "firefox browser"]
+  },
+  "close firefox": {
+    "type": "close",
+    "process_name": "firefox.exe",
+    "display_name": "Firefox",
+    "aliases": ["terminate firefox", "exit firefox"]
+  },
+  "is firefox running": {
+    "type": "status",
+    "process_name": "firefox.exe",
+    "display_name": "Firefox",
+    "aliases": ["check firefox status", "is firefox open"]
+  },
+
+  "open vs code": {
+    "type": "application",
+    "command": "code",
+    "process_name": "Code.exe",
+    "display_name": "Visual Studio Code",
+    "aliases": ["open vscode", "launch vscode", "launch vs code", "vscode", "vs code"]
+  },
+  "close vs code": {
+    "type": "close",
+    "process_name": "Code.exe",
+    "display_name": "Visual Studio Code",
+    "aliases": ["close vscode", "terminate vscode", "terminate vs code", "exit vscode", "exit vs code"]
+  },
+  "is vs code open": {
+    "type": "status",
+    "process_name": "Code.exe",
+    "display_name": "Visual Studio Code",
+    "aliases": ["is vscode open", "is vscode running", "is vs code running", "check vscode status", "check vs code status"]
+  },
+
+  "open cursor": {
+    "type": "application",
+    "command": "cursor",
+    "process_name": "Cursor.exe",
+    "display_name": "Cursor",
+    "aliases": ["launch cursor", "cursor editor"]
+  },
+  "close cursor": {
+    "type": "close",
+    "process_name": "Cursor.exe",
+    "display_name": "Cursor",
+    "aliases": ["terminate cursor", "exit cursor"]
+  },
+  "is cursor running": {
+    "type": "status",
+    "process_name": "Cursor.exe",
+    "display_name": "Cursor",
+    "aliases": ["check cursor status", "is cursor open"]
+  },
+
+  "open intellij idea": {
+    "type": "application",
+    "command": "idea",
+    "process_name": "idea64.exe",
+    "display_name": "IntelliJ IDEA",
+    "aliases": ["open intellij", "launch intellij", "intellij"]
+  },
+  "close intellij idea": {
+    "type": "close",
+    "process_name": "idea64.exe",
+    "display_name": "IntelliJ IDEA",
+    "aliases": ["close intellij", "terminate intellij", "exit intellij"]
+  },
+  "is intellij running": {
+    "type": "status",
+    "process_name": "idea64.exe",
+    "display_name": "IntelliJ IDEA",
+    "aliases": ["check intellij status", "is intellij open"]
+  },
+
+  "open pycharm": {
+    "type": "application",
+    "command": "pycharm",
+    "process_name": "pycharm64.exe",
+    "display_name": "PyCharm",
+    "aliases": ["launch pycharm"]
+  },
+  "close pycharm": {
+    "type": "close",
+    "process_name": "pycharm64.exe",
+    "display_name": "PyCharm",
+    "aliases": ["terminate pycharm", "exit pycharm"]
+  },
+  "is pycharm running": {
+    "type": "status",
+    "process_name": "pycharm64.exe",
+    "display_name": "PyCharm",
+    "aliases": ["check pycharm status", "is pycharm open"]
+  },
+
+  "open android studio": {
+    "type": "application",
+    "command": "studio",
+    "process_name": "studio64.exe",
+    "display_name": "Android Studio",
+    "aliases": ["launch android studio", "android studio"]
+  },
+  "close android studio": {
+    "type": "close",
+    "process_name": "studio64.exe",
+    "display_name": "Android Studio",
+    "aliases": ["terminate android studio", "exit android studio"]
+  },
+  "is android studio running": {
+    "type": "status",
+    "process_name": "studio64.exe",
+    "display_name": "Android Studio",
+    "aliases": ["check android studio status", "is android studio open"]
+  },
+
+  "open eclipse": {
+    "type": "application",
+    "command": "eclipse",
+    "process_name": "eclipse.exe",
+    "display_name": "Eclipse",
+    "aliases": ["launch eclipse"]
+  },
+  "close eclipse": {
+    "type": "close",
+    "process_name": "eclipse.exe",
+    "display_name": "Eclipse",
+    "aliases": ["terminate eclipse", "exit eclipse"]
+  },
+  "is eclipse running": {
+    "type": "status",
+    "process_name": "eclipse.exe",
+    "display_name": "Eclipse",
+    "aliases": ["check eclipse status", "is eclipse open"]
+  },
+
+  "open notepad": {
+    "type": "application",
+    "command": "notepad",
+    "process_name": "notepad.exe",
+    "display_name": "Notepad",
+    "aliases": ["launch notepad"]
+  },
+  "close notepad": {
+    "type": "close",
+    "process_name": "notepad.exe",
+    "display_name": "Notepad",
+    "aliases": ["terminate notepad", "exit notepad"]
+  },
+  "is notepad running": {
+    "type": "status",
+    "process_name": "notepad.exe",
+    "display_name": "Notepad",
+    "aliases": ["check notepad status", "is notepad open"]
+  },
+
+  "open notepad plus plus": {
+    "type": "application",
+    "command": "notepad++",
+    "process_name": "notepad++.exe",
+    "display_name": "Notepad++",
+    "aliases": ["open notepad++", "launch notepad++", "launch notepad plus plus"]
+  },
+  "close notepad plus plus": {
+    "type": "close",
+    "process_name": "notepad++.exe",
+    "display_name": "Notepad++",
+    "aliases": ["close notepad++", "terminate notepad++", "exit notepad++"]
+  },
+  "is notepad plus plus running": {
+    "type": "status",
+    "process_name": "notepad++.exe",
+    "display_name": "Notepad++",
+    "aliases": ["check notepad++ status", "is notepad++ open"]
+  },
+
+  "open calculator": {
+    "type": "application",
+    "command": "calc",
+    "process_name": "CalculatorApp.exe",
+    "display_name": "Calculator",
+    "aliases": ["launch calculator", "calculator", "open calc"]
+  },
+  "close calculator": {
+    "type": "close",
+    "process_name": "CalculatorApp.exe",
+    "display_name": "Calculator",
+    "aliases": ["terminate calculator", "exit calculator", "close calc", "kill calc"]
+  },
+  "is calculator running": {
+    "type": "status",
+    "process_name": "CalculatorApp.exe",
+    "display_name": "Calculator",
+    "aliases": ["check calculator status", "is calculator open", "is calc running"]
+  },
+
+  "open file explorer": {
+    "type": "application",
+    "command": "explorer",
+    "process_name": "explorer.exe",
+    "display_name": "File Explorer",
+    "aliases": ["launch file explorer", "open explorer", "explorer"]
+  },
+  "close file explorer": {
+    "type": "close",
+    "process_name": "explorer.exe",
+    "display_name": "File Explorer",
+    "aliases": ["close explorer", "terminate explorer", "exit explorer"]
+  },
+  "is explorer running": {
+    "type": "status",
+    "process_name": "explorer.exe",
+    "display_name": "File Explorer",
+    "aliases": ["check explorer status", "is explorer open", "is file explorer open"]
+  },
+
+  "open command prompt": {
+    "type": "application",
+    "command": "start cmd",
+    "process_name": "cmd.exe",
+    "display_name": "Command Prompt",
+    "aliases": ["launch command prompt", "open cmd", "cmd"]
+  },
+  "close command prompt": {
+    "type": "close",
+    "process_name": "cmd.exe",
+    "display_name": "Command Prompt",
+    "aliases": ["close cmd", "terminate cmd", "exit cmd"]
+  },
+  "is cmd running": {
+    "type": "status",
+    "process_name": "cmd.exe",
+    "display_name": "Command Prompt",
+    "aliases": ["check cmd status", "is command prompt open", "is cmd open"]
+  },
+
+  "open powershell": {
+    "type": "application",
+    "command": "start powershell",
+    "process_name": "powershell.exe",
+    "display_name": "PowerShell",
+    "aliases": ["launch powershell"]
+  },
+  "close powershell": {
+    "type": "close",
+    "process_name": "powershell.exe",
+    "display_name": "PowerShell",
+    "aliases": ["terminate powershell", "exit powershell"]
+  },
+  "is powershell running": {
+    "type": "status",
+    "process_name": "powershell.exe",
+    "display_name": "PowerShell",
+    "aliases": ["check powershell status", "is powershell open"]
+  },
+
+  "open windows terminal": {
+    "type": "application",
+    "command": "wt",
+    "process_name": "WindowsTerminal.exe",
+    "display_name": "Windows Terminal",
+    "aliases": ["launch windows terminal", "open terminal"]
+  },
+  "close windows terminal": {
+    "type": "close",
+    "process_name": "WindowsTerminal.exe",
+    "display_name": "Windows Terminal",
+    "aliases": ["close terminal", "terminate terminal", "exit terminal"]
+  },
+  "is terminal running": {
+    "type": "status",
+    "process_name": "WindowsTerminal.exe",
+    "display_name": "Windows Terminal",
+    "aliases": ["check terminal status", "is terminal open"]
+  },
+
+  "open git bash": {
+    "type": "application",
+    "command": "git-bash",
+    "process_name": "git-bash.exe",
+    "display_name": "Git Bash",
+    "aliases": ["launch git bash", "git bash"]
+  },
+  "close git bash": {
+    "type": "close",
+    "process_name": "git-bash.exe",
+    "display_name": "Git Bash",
+    "aliases": ["terminate git bash", "exit git bash"]
+  },
+  "is git bash running": {
+    "type": "status",
+    "process_name": "git-bash.exe",
+    "display_name": "Git Bash",
+    "aliases": ["check git bash status", "is git bash open"]
+  },
+
+  "open docker desktop": {
+    "type": "application",
+    "command": "\"C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe\"",
+    "process_name": "Docker Desktop.exe",
+    "display_name": "Docker Desktop",
+    "aliases": ["launch docker", "docker desktop", "open docker"]
+  },
+  "close docker desktop": {
+    "type": "close",
+    "process_name": "Docker Desktop.exe",
+    "display_name": "Docker Desktop",
+    "aliases": ["close docker", "terminate docker", "exit docker"]
+  },
+  "is docker running": {
+    "type": "status",
+    "process_name": "Docker Desktop.exe",
+    "display_name": "Docker Desktop",
+    "aliases": ["check docker status", "is docker open"]
+  },
+
+  "open postman": {
+    "type": "application",
+    "command": "postman",
+    "process_name": "Postman.exe",
+    "display_name": "Postman",
+    "aliases": ["launch postman"]
+  },
+  "close postman": {
+    "type": "close",
+    "process_name": "Postman.exe",
+    "display_name": "Postman",
+    "aliases": ["terminate postman", "exit postman"]
+  },
+  "is postman running": {
+    "type": "status",
+    "process_name": "Postman.exe",
+    "display_name": "Postman",
+    "aliases": ["check postman status", "is postman open"]
+  },
+
+  "open mongodb compass": {
+    "type": "application",
+    "command": "mongodbcompass",
+    "process_name": "MongoDBCompass.exe",
+    "display_name": "MongoDB Compass",
+    "aliases": ["launch compass", "mongodb compass", "compass"]
+  },
+  "close mongodb compass": {
+    "type": "close",
+    "process_name": "MongoDBCompass.exe",
+    "display_name": "MongoDB Compass",
+    "aliases": ["close compass", "terminate compass", "exit compass"]
+  },
+  "is compass running": {
+    "type": "status",
+    "process_name": "MongoDBCompass.exe",
+    "display_name": "MongoDB Compass",
+    "aliases": ["check compass status", "is compass open"]
+  },
+
+  "open mysql workbench": {
+    "type": "application",
+    "command": "mysql-workbench",
+    "process_name": "MySQLWorkbench.exe",
+    "display_name": "MySQL Workbench",
+    "aliases": ["launch mysql workbench", "workbench"]
+  },
+  "close mysql workbench": {
+    "type": "close",
+    "process_name": "MySQLWorkbench.exe",
+    "display_name": "MySQL Workbench",
+    "aliases": ["terminate mysql workbench", "exit mysql workbench"]
+  },
+  "is workbench running": {
+    "type": "status",
+    "process_name": "MySQLWorkbench.exe",
+    "display_name": "MySQL Workbench",
+    "aliases": ["check workbench status", "is workbench open"]
+  },
+
+  "open xampp": {
+    "type": "application",
+    "command": "xampp-control",
+    "process_name": "xampp-control.exe",
+    "display_name": "XAMPP Control Panel",
+    "aliases": ["launch xampp", "xampp"]
+  },
+  "close xampp": {
+    "type": "close",
+    "process_name": "xampp-control.exe",
+    "display_name": "XAMPP Control Panel",
+    "aliases": ["terminate xampp", "exit xampp"]
+  },
+  "is xampp running": {
+    "type": "status",
+    "process_name": "xampp-control.exe",
+    "display_name": "XAMPP Control Panel",
+    "aliases": ["check xampp status", "is xampp open"]
+  },
+
+  "open spotify": {
+    "type": "application",
+    "command": "start spotify",
+    "process_name": "Spotify.exe",
+    "display_name": "Spotify",
+    "aliases": ["launch spotify", "spotify"]
+  },
+  "close spotify": {
+    "type": "close",
+    "process_name": "Spotify.exe",
+    "display_name": "Spotify",
+    "aliases": ["terminate spotify", "exit spotify"]
+  },
+  "check spotify status": {
+    "type": "status",
+    "process_name": "Spotify.exe",
+    "display_name": "Spotify",
+    "aliases": ["is spotify running", "check spotify status", "is spotify open"]
+  },
+
+  "open discord": {
+    "type": "application",
+    "command": "discord",
+    "process_name": "Discord.exe",
+    "display_name": "Discord",
+    "aliases": ["launch discord", "discord app"]
+  },
+  "close discord": {
+    "type": "close",
+    "process_name": "Discord.exe",
+    "display_name": "Discord",
+    "aliases": ["terminate discord", "exit discord"]
+  },
+  "is discord running": {
+    "type": "status",
+    "process_name": "Discord.exe",
+    "display_name": "Discord",
+    "aliases": ["check discord status", "is discord open"]
+  },
+
+  "open slack": {
+    "type": "application",
+    "command": "slack",
+    "process_name": "Slack.exe",
+    "display_name": "Slack",
+    "aliases": ["launch slack", "slack app"]
+  },
+  "close slack": {
+    "type": "close",
+    "process_name": "Slack.exe",
+    "display_name": "Slack",
+    "aliases": ["terminate slack", "exit slack"]
+  },
+  "is slack running": {
+    "type": "status",
+    "process_name": "Slack.exe",
+    "display_name": "Slack",
+    "aliases": ["check slack status", "is slack open"]
+  },
+
+  "open teams": {
+    "type": "application",
+    "command": "teams",
+    "process_name": "ms-teams.exe",
+    "display_name": "Microsoft Teams",
+    "aliases": ["launch teams", "microsoft teams", "open microsoft teams"]
+  },
+  "close teams": {
+    "type": "close",
+    "process_name": "ms-teams.exe",
+    "display_name": "Microsoft Teams",
+    "aliases": ["close microsoft teams", "terminate teams", "exit teams"]
+  },
+  "is teams running": {
+    "type": "status",
+    "process_name": "ms-teams.exe",
+    "display_name": "Microsoft Teams",
+    "aliases": ["check teams status", "is teams open"]
+  },
+
+  "open zoom": {
+    "type": "application",
+    "command": "zoom",
+    "process_name": "Zoom.exe",
+    "display_name": "Zoom",
+    "aliases": ["launch zoom"]
+  },
+  "close zoom": {
+    "type": "close",
+    "process_name": "Zoom.exe",
+    "display_name": "Zoom",
+    "aliases": ["terminate zoom", "exit zoom"]
+  },
+  "is zoom running": {
+    "type": "status",
+    "process_name": "Zoom.exe",
+    "display_name": "Zoom",
+    "aliases": ["check zoom status", "is zoom open"]
+  },
+
+  "open telegram": {
+    "type": "application",
+    "command": "telegram",
+    "process_name": "Telegram.exe",
+    "display_name": "Telegram",
+    "aliases": ["launch telegram", "telegram desktop"]
+  },
+  "close telegram": {
+    "type": "close",
+    "process_name": "Telegram.exe",
+    "display_name": "Telegram",
+    "aliases": ["terminate telegram", "exit telegram"]
+  },
+  "is telegram running": {
+    "type": "status",
+    "process_name": "Telegram.exe",
+    "display_name": "Telegram",
+    "aliases": ["check telegram status", "is telegram open"]
+  },
+
+  "open whatsapp": {
+    "type": "application",
+    "command": "whatsapp",
+    "process_name": "WhatsApp.exe",
+    "display_name": "WhatsApp",
+    "aliases": ["launch whatsapp", "whatsapp desktop"]
+  },
+  "close whatsapp": {
+    "type": "close",
+    "process_name": "WhatsApp.exe",
+    "display_name": "WhatsApp",
+    "aliases": ["terminate whatsapp", "exit whatsapp"]
+  },
+  "is whatsapp running": {
+    "type": "status",
+    "process_name": "WhatsApp.exe",
+    "display_name": "WhatsApp",
+    "aliases": ["check whatsapp status", "is whatsapp open"]
+  },
+
+  "open obs studio": {
+    "type": "application",
+    "command": "obs",
+    "process_name": "obs64.exe",
+    "display_name": "OBS Studio",
+    "aliases": ["launch obs", "obs studio", "open obs"]
+  },
+  "close obs studio": {
+    "type": "close",
+    "process_name": "obs64.exe",
+    "display_name": "OBS Studio",
+    "aliases": ["close obs", "terminate obs", "exit obs"]
+  },
+  "is obs running": {
+    "type": "status",
+    "process_name": "obs64.exe",
+    "display_name": "OBS Studio",
+    "aliases": ["check obs status", "is obs open"]
+  },
+
+  "open vlc": {
+    "type": "application",
+    "command": "vlc",
+    "process_name": "vlc.exe",
+    "display_name": "VLC Media Player",
+    "aliases": ["launch vlc", "vlc media player", "open vlc media player"]
+  },
+  "close vlc": {
+    "type": "close",
+    "process_name": "vlc.exe",
+    "display_name": "VLC Media Player",
+    "aliases": ["terminate vlc", "exit vlc"]
+  },
+  "is vlc running": {
+    "type": "status",
+    "process_name": "vlc.exe",
+    "display_name": "VLC Media Player",
+    "aliases": ["check vlc status", "is vlc open"]
+  },
+
+  "open figma": {
+    "type": "application",
+    "command": "figma",
+    "process_name": "Figma.exe",
+    "display_name": "Figma",
+    "aliases": ["launch figma"]
+  },
+  "close figma": {
+    "type": "close",
+    "process_name": "Figma.exe",
+    "display_name": "Figma",
+    "aliases": ["terminate figma", "exit figma"]
+  },
+  "is figma running": {
+    "type": "status",
+    "process_name": "Figma.exe",
+    "display_name": "Figma",
+    "aliases": ["check figma status", "is figma open"]
+  },
+
+  "open canva": {
+    "type": "application",
+    "command": "canva",
+    "process_name": "Canva.exe",
+    "display_name": "Canva",
+    "aliases": ["launch canva", "canva desktop"]
+  },
+  "close canva": {
+    "type": "close",
+    "process_name": "Canva.exe",
+    "display_name": "Canva",
+    "aliases": ["terminate canva", "exit canva"]
+  },
+  "is canva running": {
+    "type": "status",
+    "process_name": "Canva.exe",
+    "display_name": "Canva",
+    "aliases": ["check canva status", "is canva open"]
+  },
+
+  "open github desktop": {
+    "type": "application",
+    "command": "github",
+    "process_name": "GitHubDesktop.exe",
+    "display_name": "GitHub Desktop",
+    "aliases": ["launch github desktop"]
+  },
+  "close github desktop": {
+    "type": "close",
+    "process_name": "GitHubDesktop.exe",
+    "display_name": "GitHub Desktop",
+    "aliases": ["terminate github desktop", "exit github desktop"]
+  },
+  "is github desktop running": {
+    "type": "status",
+    "process_name": "GitHubDesktop.exe",
+    "display_name": "GitHub Desktop",
+    "aliases": ["check github desktop status", "is github desktop open"]
+  },
+
+  "github": {
+    "type": "website",
+    "url": "https://github.com",
+    "display_name": "GitHub",
+    "aliases": ["open github", "github website", "launch github"]
+  },
+  "linkedin": {
+    "type": "website",
+    "url": "https://www.linkedin.com",
+    "display_name": "LinkedIn",
+    "aliases": ["open linkedin", "linkedin website", "launch linkedin"]
+  },
+  "chatgpt": {
+    "type": "website",
+    "url": "https://chatgpt.com",
+    "display_name": "ChatGPT",
+    "aliases": ["open chatgpt", "chatgpt website", "launch chatgpt", "chat gpt", "open chat gpt"]
+  },
+  "stack overflow": {
+    "type": "website",
+    "url": "https://stackoverflow.com",
+    "display_name": "Stack Overflow",
+    "aliases": ["open stackoverflow", "open stack overflow", "stack overflow website", "stack overflow"]
+  },
+  "leetcode": {
+    "type": "website",
+    "url": "https://leetcode.com",
+    "display_name": "LeetCode",
+    "aliases": ["open leetcode", "leetcode website", "leetcode"]
+  },
+  "hackerrank": {
+    "type": "website",
+    "url": "https://hackerrank.com",
+    "display_name": "HackerRank",
+    "aliases": ["open hackerrank", "hackerrank website", "hackerrank"]
+  },
+  "geeksforgeeks": {
+    "type": "website",
+    "url": "https://www.geeksforgeeks.org",
+    "display_name": "GeeksforGeeks",
+    "aliases": ["open geeksforgeeks", "geeksforgeeks website", "geeks for geeks", "open geeks for geeks"]
+  },
+  "youtube": {
+    "type": "website",
+    "url": "https://www.youtube.com",
+    "display_name": "YouTube",
+    "aliases": ["open youtube", "youtube website"]
+  },
+  "gmail": {
+    "type": "website",
+    "url": "https://mail.google.com",
+    "display_name": "Gmail",
+    "aliases": ["open gmail", "gmail website", "gmail", "open mail"]
+  },
+  "google drive": {
+    "type": "website",
+    "url": "https://drive.google.com",
+    "display_name": "Google Drive",
+    "aliases": ["open google drive", "google drive website", "google drive", "open drive"]
+  },
+  "vercel": {
+    "type": "website",
+    "url": "https://vercel.com",
+    "display_name": "Vercel",
+    "aliases": ["open vercel", "vercel website", "vercel"]
+  },
+  "netlify": {
+    "type": "website",
+    "url": "https://netlify.com",
+    "display_name": "Netlify",
+    "aliases": ["open netlify", "netlify website", "netlify"]
+  },
+  "mongodb atlas": {
+    "type": "website",
+    "url": "https://mongodb.com/cloud/atlas",
+    "display_name": "MongoDB Atlas",
+    "aliases": ["open mongodb atlas", "mongodb atlas website", "atlas", "open atlas"]
+  },
+
+  "minimize window": {
+    "type": "window",
+    "action": "minimize",
+    "aliases": ["minimize", "minimize the active window", "minimize active window"]
+  },
+  "maximize window": {
+    "type": "window",
+    "action": "maximize",
+    "aliases": ["maximize", "maximize the active window", "maximize active window"]
+  },
+  "restore window": {
+    "type": "window",
+    "action": "restore",
+    "aliases": ["restore", "restore active window", "restore window size"]
+  },
+  "close current window": {
+    "type": "window",
+    "action": "close_current",
+    "aliases": ["close window", "close active window", "close current program"]
+  },
+  "switch tab": {
+    "type": "window",
+    "action": "switch_tab",
+    "aliases": ["switch tabs", "next tab", "change tab"]
+  },
+  "show desktop": {
+    "type": "window",
+    "action": "show_desktop",
+    "aliases": ["desktop", "minimize all windows", "hide all windows"]
+  },
+  "open task manager": {
+    "type": "window",
+    "action": "open_task_manager",
+    "aliases": ["task manager", "launch task manager", "open taskmgr"]
+  },
+
+  "stop assistant": {
+    "type": "special",
+    "action": "stop",
+    "aliases": ["exit assistant", "shutdown assistant", "stop listening", "quit assistant", "close assistant"]
+  }
+}

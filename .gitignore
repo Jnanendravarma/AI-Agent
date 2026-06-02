@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+logs/
+screenshots/
+history/
+config/apps_cache.json
+.gemini/
+.idea/
+.vscode/
+venv/
+.env

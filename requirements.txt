@@ -1,0 +1,14 @@
+SpeechRecognition
+pyttsx3
+pyautogui
+psutil
+keyboard
+mouse
+pyaudio
+rapidfuzz
+pycaw
+screen-brightness-control
+pygetwindow
+pillow
+winshell
+comtypes

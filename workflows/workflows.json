@@ -1,0 +1,48 @@
+{
+  "coding setup": [
+    {
+      "type": "application",
+      "command": "code"
+    },
+    {
+      "type": "website",
+      "url": "https://github.com"
+    },
+    {
+      "type": "website",
+      "url": "https://google.com"
+    }
+  ],
+  "mern setup": [
+    {
+      "type": "application",
+      "command": "code"
+    },
+    {
+      "type": "application",
+      "command": "mongodb-compass"
+    },
+    {
+      "type": "website",
+      "url": "https://google.com"
+    },
+    {
+      "type": "application",
+      "command": "cmd"
+    }
+  ],
+  "meeting setup": [
+    {
+      "type": "application",
+      "command": "notepad"
+    },
+    {
+      "type": "website",
+      "url": "https://teams.microsoft.com"
+    },
+    {
+      "type": "website",
+      "url": "https://google.com"
+    }
+  ]
+}
