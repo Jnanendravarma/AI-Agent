@@ -12,3 +12,8 @@ pygetwindow
 pillow
 winshell
 comtypes
+google-generativeai
+python-dotenv
+pypdf
+azure-cognitiveservices-speech
+elevenlabs

@@ -9,3 +9,5 @@ config/apps_cache.json
 .vscode/
 venv/
 .env
+memory/
+

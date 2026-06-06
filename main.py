@@ -23,19 +23,34 @@ def main():
     greeting = "Desktop Automation Assistant is initialized and ready."
     speaker.speak(greeting)
 
+    # Track chat mode state
+    in_chat_mode = False
+
     # Continuous listening and processing loop
     try:
         while True:
-            # Step 1: Listen for voice input (or keyboard fallback)
+            # Step 1: Wait for wake word if voice mode is active, wake word is enabled, and NOT in chat mode
+            if not in_chat_mode:
+                if not listener.use_keyboard_fallback and listener.wake_word_enabled:
+                    listener.wait_for_wake_word()
+                    speaker.speak("Yes?")
+
+            # Step 2: Listen for voice command or keyboard input
             command = listener.listen()
             
-            # If the command is empty, just continue listening
+            # If the command is empty, just continue
             if not command:
                 continue
                 
-            # Step 2: Handle local exit commands directly if needed, or pass to executor
-            # This ensures clean shutdown even if config fails
             cmd_lower = command.lower().strip()
+
+            # Handle exiting chat mode
+            if in_chat_mode and cmd_lower in ["exit chat", "stop chat", "exit chat mode", "stop chat mode"]:
+                in_chat_mode = False
+                speaker.speak("Exiting chat mode. Returning to standard assistant.")
+                continue
+
+            # Handle local exit commands directly if needed
             if cmd_lower in ["stop assistant", "exit assistant", "shutdown assistant"]:
                 goodbye = "Shutting down the assistant. Goodbye!"
                 speaker.speak(goodbye)
@@ -44,6 +59,10 @@ def main():
 
             # Step 3: Match and execute command using the dynamic command engine
             success, response = executor.execute(command)
+
+            # Check if user triggered chat mode to bypass wake word for next turn
+            if "start chat mode" in cmd_lower:
+                in_chat_mode = True
             
             # Step 4: Speak status / action confirmation back to the user
             if response:
@@ -65,3 +84,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

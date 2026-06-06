@@ -2,10 +2,20 @@ import os
 import json
 import datetime
 import webbrowser
+import re
 from utils.logger import logger
 from controllers.app_controller import AppController
 from controllers.window_controller import WindowController
 from controllers.process_manager import ProcessManager
+
+# AI Imports
+from ai.gemini_client import GeminiClient
+from ai.memory_manager import MemoryManager
+from ai.context_manager import ContextManager
+from ai.intent_classifier import IntentClassifier
+from ai.planner import TaskPlanner
+from ai.workflow_generator import WorkflowGenerator
+from services.pdf_service import PDFService
 
 class CommandExecutor:
     def __init__(self, config_path=None):
@@ -26,6 +36,15 @@ class CommandExecutor:
         self.load_folders()
         # Perform Windows Start Menu application discovery
         self.discover_applications()
+
+        # Initialize AI Modules
+        self.gemini_client = GeminiClient()
+        self.memory_manager = MemoryManager()
+        self.context_manager = ContextManager(self.gemini_client, self.memory_manager)
+        self.intent_classifier = IntentClassifier(self.gemini_client)
+        self.task_planner = TaskPlanner(self.gemini_client)
+        self.workflow_generator = WorkflowGenerator(self.gemini_client)
+
 
     def load_commands(self):
         """Loads command mappings from the JSON configuration file and flat-maps aliases."""
@@ -235,7 +254,197 @@ class CommandExecutor:
 
     def execute(self, spoken_text: str) -> tuple[bool, str]:
         """
-        Processes and executes the recognized command.
+        Phase 3 Orchestrated Execution. Resolves context, classifies intent,
+        executes task, frames multilingual output, and logs to conversational memory.
+        """
+        if not spoken_text:
+            return False, ""
+
+        # 1. Resolve pronouns/context
+        resolved_command = self.context_manager.resolve_context(spoken_text)
+
+        # 2. Classify intent
+        classification = self.intent_classifier.classify(resolved_command)
+        intent = classification.get("intent", "chat_mode")
+        entities = classification.get("entities", {})
+
+        success = False
+        response = ""
+
+        # 3. Route according to classified intent
+        if intent == "chat_mode":
+            success, response = self._handle_chat_mode(resolved_command)
+
+        elif intent == "task_planning":
+            success, response = self._handle_task_planning(resolved_command)
+
+        elif intent == "document_analysis":
+            success, response = PDFService.execute_pdf_action(self.gemini_client, resolved_command)
+
+        elif intent == "screenshot_analysis":
+            from services.screenshot_service import ScreenshotService
+            success, response = ScreenshotService.analyze_screenshot(self.gemini_client, resolved_command)
+
+        elif intent == "workflow_execution":
+            project_name = entities.get("project_name")
+            if project_name:
+                success, response = self._handle_dynamic_workflow(project_name)
+            else:
+                from services.workflow_service import WorkflowService
+                success, response = WorkflowService.execute_workflow(resolved_command)
+
+        else:
+            # Route to local device control block
+            success, response = self._execute_local_command(resolved_command, intent, entities)
+
+        # 4. Multilingual rephrasing fallback for status messages
+        if response:
+            response = self._ensure_same_language(spoken_text, response)
+
+        # 5. Log interaction to conversational memory
+        self.memory_manager.add_interaction(role="user", message=spoken_text)
+        self.memory_manager.add_interaction(role="assistant", message=response, context={"intent": intent})
+
+        return success, response
+
+    def _handle_chat_mode(self, command: str) -> tuple[bool, str]:
+        """Runs interactive AI chat session with full context memory."""
+        if command.lower().strip() == "start chat mode":
+            return True, "Chat mode is now active. You can ask me to write code, explain logic, or teach you concepts. What would you like to discuss?"
+
+        history = self.memory_manager.get_recent_history(limit=10)
+        history_str = ""
+        for item in history:
+            role_lbl = "User" if item["role"] == "user" else "Assistant"
+            history_str += f"{role_lbl}: {item['message']}\n"
+
+        system_prompt = """You are an intelligent desktop AI assistant.
+Always respond in the same language used by the user.
+If the user speaks Telugu (or Telglish/Latin Telugu), respond in Telugu/Telglish.
+If the user speaks English, respond in English.
+If the user speaks Hindi (or Hinglish/Latin Hindi), respond in Hindi/Hinglish.
+Keep responses concise and informative.
+Never change language unless requested.
+You support programming help, interview prep, debugging, project guidance, code generation, and concept explanations.
+"""
+        prompt = f"{system_prompt}\nRecent Chat History:\n{history_str}\nUser: {command}\nAssistant:"
+        response, err = self.gemini_client.generate_content(prompt, model_name="gemini-2.5-flash")
+        if err:
+            return False, f"Could not generate chat response: {err}"
+        return True, response
+
+    def _handle_task_planning(self, command: str) -> tuple[bool, str]:
+        """Uses AI Planner to generate and execute action plan for compound tasks."""
+        apps_list = list(self.discovered_apps.keys())
+        folders_list = list(self.folders.keys())
+
+        plan = self.task_planner.generate_plan(command, apps_list, folders_list)
+        if not plan:
+            return False, "I couldn't formulate a plan to satisfy that request."
+
+        executed_steps = []
+        for step in plan:
+            stype = step.get("type")
+            target = step.get("target")
+            if not target:
+                continue
+
+            try:
+                if stype == "open_app":
+                    app_path = self.discovered_apps.get(target.lower()) or target
+                    if AppController.open_app(app_path):
+                        executed_steps.append(f"Opened {target.title()}")
+                elif stype == "open_folder":
+                    folder_path = self.folders.get(target.lower()) or target
+                    expanded = os.path.expanduser(folder_path)
+                    if os.path.exists(expanded):
+                        os.startfile(expanded)
+                        executed_steps.append(f"Opened folder {target.title()}")
+                elif stype == "open_url":
+                    webbrowser.open(target)
+                    executed_steps.append(f"Opened URL {target}")
+            except Exception as e:
+                logger.log_error(f"Planning execution step failed: {e}")
+
+        if executed_steps:
+            return True, "Completed task steps: " + ", ".join(executed_steps)
+        return False, "No planning tasks could be completed."
+
+    def _handle_dynamic_workflow(self, project_name: str) -> tuple[bool, str]:
+        """Uses WorkflowGenerator to analyze workspaces and launch project environments."""
+        plan = self.workflow_generator.generate_dynamic_workflow(project_name, self.discovered_apps)
+        if not plan:
+            return False, f"Could not construct workflow for '{project_name}'."
+
+        executed = []
+        for step in plan:
+            stype = step.get("type")
+            target = step.get("target")
+            if not target:
+                continue
+
+            try:
+                if stype == "open_folder":
+                    if os.path.exists(target):
+                        os.startfile(target)
+                        executed.append(f"opened project directory")
+                elif stype == "open_app":
+                    if "code" in target.lower() or "visual studio code" in target.lower():
+                        project_folder = self.workflow_generator._find_project_folder(project_name)
+                        if project_folder:
+                            vscode_path = self.discovered_apps.get("visual studio code") or self.discovered_apps.get("vscode")
+                            if vscode_path:
+                                import subprocess
+                                subprocess.Popen([vscode_path, project_folder], shell=True)
+                                executed.append("started VS Code on project")
+                                continue
+                    app_path = self.discovered_apps.get(target.lower()) or target
+                    if AppController.open_app(app_path):
+                        executed.append(f"launched {target.title()}")
+                elif stype == "open_url":
+                    webbrowser.open(target)
+                    executed.append(f"opened url {target}")
+            except Exception as e:
+                logger.log_error(f"Dynamic workflow execution step failed: {e}")
+
+        if executed:
+            return True, f"Configured workspace for {project_name.title()}: " + ", ".join(executed)
+        return False, "Failed to initialize project workflow."
+
+    def _ensure_same_language(self, query: str, response: str) -> str:
+        """Adapts status messages to the language style of the user query."""
+        contains_telugu = re.search(r"[\u0c00-\u0c7f]", query) or any(w in query.lower() for w in ["cheyyi", "open chey", "chastna", "pettuko"])
+        contains_hindi = re.search(r"[\u0900-\u097f]", query) or any(w in query.lower() for w in ["karo", "kholo", "band kar", "rakho"])
+
+        if not contains_telugu and not contains_hindi:
+            return response
+
+        prompt = f"""
+You are a translation assistant for a desktop AI agent.
+The user queried: "{query}"
+The status response of the action is: "{response}"
+
+Rephrase the status response in the EXACT same language and style (including Hinglish, Telglish, Telugu script, or Hindi script) used by the user in their query. Keep the response natural, conversational, and extremely concise.
+
+Examples:
+Query: "Chrome open cheyyi"
+Status: "Opening discovered application Chrome"
+Output: "Chrome open chesthunna."
+
+Query: "Chrome band karo"
+Status: "Closing Chrome"
+Output: "Chrome band kar raha hoon."
+
+Output ONLY the rephrased status response. Do not include quotes or extra commentary.
+"""
+        translated, err = self.gemini_client.generate_content(prompt, model_name="gemini-2.5-flash")
+        if translated and not err:
+            return translated.strip().strip('"')
+        return response
+
+    def _execute_local_command(self, spoken_text: str, intent: str = None, entities: dict = None) -> tuple[bool, str]:
+        """
+        Processes and executes the recognized command locally.
         Routes dynamically to system services, fuzzy matched configs, folder navigation,
         discovered apps, or spelling suggestion routines.
         """
@@ -261,14 +470,14 @@ class CommandExecutor:
             return success, response
 
         # --- ROUTING BLOCK 3: Audio Control ---
-        if any(keyword in cmd_clean for keyword in ["volume", "mute", "unmute", "sound"]):
+        if any(keyword in cmd_clean for keyword in ["volume", "mute", "unmute", "sound"]) or intent == "volume_control":
             from services.volume_service import VolumeService
             success, response = VolumeService.execute_volume_command(spoken_text)
             self.log_history(spoken_text, "Success" if success else "Failed")
             return success, response
 
         # --- ROUTING BLOCK 4: Brightness Control ---
-        if "brightness" in cmd_clean:
+        if "brightness" in cmd_clean or intent == "brightness_control":
             from services.brightness_service import BrightnessService
             success, response = BrightnessService.execute_brightness_command(spoken_text)
             self.log_history(spoken_text, "Success" if success else "Failed")
@@ -323,8 +532,11 @@ class CommandExecutor:
         # --- ROUTING BLOCK 10: Dynamic Discovered Apps launching (Open) ---
         launch_verbs = ["open", "launch", "start", "run"]
         for verb in launch_verbs:
-            if cmd_clean.startswith(f"{verb} "):
-                app_target = cmd_clean[len(verb) + 1:].strip()
+            # Allow fallback if intent classifier found app_name entity
+            app_target = entities.get("app_name") if entities else None
+            if cmd_clean.startswith(f"{verb} ") or (intent == "open_application" and app_target):
+                if not app_target:
+                    app_target = cmd_clean[len(verb) + 1:].strip()
                 best_app_match, app_score = self.fuzzy_match_value(app_target, list(self.discovered_apps.keys()), threshold=75)
                 if best_app_match:
                     app_path = self.discovered_apps[best_app_match]
@@ -336,8 +548,10 @@ class CommandExecutor:
         # --- ROUTING BLOCK 11: Dynamic Discovered Apps termination (Close) ---
         close_verbs = ["close", "terminate", "exit", "stop"]
         for verb in close_verbs:
-            if cmd_clean.startswith(f"{verb} "):
-                app_target = cmd_clean[len(verb) + 1:].strip()
+            app_target = entities.get("app_name") if entities else None
+            if cmd_clean.startswith(f"{verb} ") or (intent == "close_application" and app_target):
+                if not app_target:
+                    app_target = cmd_clean[len(verb) + 1:].strip()
                 best_app_match, app_score = self.fuzzy_match_value(app_target, list(self.discovered_apps.keys()), threshold=75)
                 if best_app_match:
                     app_path = self.discovered_apps[best_app_match]
@@ -434,3 +648,4 @@ class CommandExecutor:
             return False, f"Command not recognized. Did you mean '{best_suggestion}'?"
             
         return False, "Command not recognized"
+
