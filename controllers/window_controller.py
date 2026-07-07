@@ -14,23 +14,58 @@ PYWIN32_AVAILABLE = False
 try:
     import win32gui
     import win32con
+    import win32process
     PYWIN32_AVAILABLE = True
 except ImportError:
-    logger.log_error("pywin32 (win32gui/win32con) library not installed. Enterprise window actions disabled.")
+    logger.log_error("pywin32 library not installed. Direct OS window actions disabled.")
 
 class WindowController:
     @staticmethod
+    def get_active_window_info() -> tuple[any, str, int]:
+        """
+        Retrieves the handle, title, and process ID of the currently active window.
+        Returns (hwnd, title, pid).
+        """
+        if not PYWIN32_AVAILABLE:
+            return None, "", 0
+        try:
+            hwnd = win32gui.GetForegroundWindow()
+            if hwnd and hwnd != 0:
+                title = win32gui.GetWindowText(hwnd)
+                _, pid = win32process.GetWindowThreadProcessId(hwnd)
+                return hwnd, title, pid
+        except Exception as e:
+            logger.log_error(f"Error fetching active window info: {e}")
+        return None, "", 0
+
+    @staticmethod
+    def find_window_by_title(target_title: str) -> any:
+        """Finds the first window handle whose title contains target_title."""
+        if not PYWIN32_AVAILABLE:
+            return None
+        matching_hwnds = []
+        
+        def enum_windows_callback(hwnd, extra):
+            if win32gui.IsWindowVisible(hwnd):
+                title = win32gui.GetWindowText(hwnd)
+                if target_title.lower() in title.lower():
+                    matching_hwnds.append(hwnd)
+                    
+        try:
+            win32gui.EnumWindows(enum_windows_callback, None)
+        except Exception as e:
+            logger.log_error(f"Error enumerating windows: {e}")
+            
+        return matching_hwnds[0] if matching_hwnds else None
+
+    @staticmethod
     def safe_hotkey(*args):
-        """
-        Sends hotkey combination using PyAutoGUI and immediately releases standard
-        modifier keys to prevent keys from getting 'stuck' in the OS.
-        """
+        """Sends hotkeys securely and releases modifier keys to avoid stuck states."""
         if not PYAUTOGUI_AVAILABLE:
             return
         try:
             pyautogui.hotkey(*args)
         finally:
-            # Release all standard modifiers to prevent sticking
             for key in ["win", "ctrl", "alt", "shift"]:
                 try:
                     pyautogui.keyUp(key)
@@ -38,20 +73,15 @@ class WindowController:
                     pass
 
     @staticmethod
-    def execute_action(action: str) -> bool:
+    def execute_action(action: str, target: str = None) -> bool:
         """
-        Executes window automation actions.
-        Uses win32gui/win32con for direct enterprise-grade OS-level actions,
-        and falls back to safe PyAutoGUI hotkeys if necessary.
+        Executes active window management operations.
+        Retrieves active window metrics (HWND, title, PID) first before dispatching actions.
         """
-        action = action.lower()
-        hwnd = None
+        action = action.lower().strip()
+        hwnd, title, pid = WindowController.get_active_window_info()
 
-        if PYWIN32_AVAILABLE:
-            try:
-                hwnd = win32gui.GetForegroundWindow()
-            except Exception as e:
-                logger.log_error(f"Error fetching active window handle via win32gui: {e}")
+        logger.log_info(f"Window Action '{action}' target='{target}' | Active Window Title: '{title}', HWND: {hwnd}, PID: {pid}")
 
         try:
             if action == "minimize":
@@ -60,11 +90,11 @@ class WindowController:
                     return True
                 elif PYAUTOGUI_AVAILABLE:
                     WindowController.safe_hotkey("win", "down")
-                    time.sleep(0.2)
+                    time.sleep(0.1)
                     WindowController.safe_hotkey("win", "down")
                     return True
                 return False
-                
+
             elif action == "maximize":
                 if hwnd and hwnd != 0:
                     win32gui.ShowWindow(hwnd, win32con.SW_MAXIMIZE)
@@ -73,7 +103,7 @@ class WindowController:
                     WindowController.safe_hotkey("win", "up")
                     return True
                 return False
-                
+
             elif action == "restore":
                 if hwnd and hwnd != 0:
                     win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
@@ -82,39 +112,51 @@ class WindowController:
                     WindowController.safe_hotkey("win", "down")
                     return True
                 return False
-                
-            elif action == "close_current":
+
+            elif action == "close_active":
                 if hwnd and hwnd != 0:
-                    # Post message is standard graceful way to request window close
                     win32gui.PostMessage(hwnd, win32con.WM_CLOSE, 0, 0)
                     return True
                 elif PYAUTOGUI_AVAILABLE:
                     WindowController.safe_hotkey("alt", "f4")
                     return True
                 return False
-                
-            elif action == "switch_tab":
+
+            elif action == "bring_to_front":
+                if target:
+                    target_hwnd = WindowController.find_window_by_title(target)
+                    if target_hwnd:
+                        try:
+                            # If minimized, restore first
+                            if win32gui.IsIconic(target_hwnd):
+                                win32gui.ShowWindow(target_hwnd, win32con.SW_RESTORE)
+                            win32gui.SetForegroundWindow(target_hwnd)
+                            return True
+                        except Exception as e:
+                            logger.log_error(f"Failed to set foreground window: {e}")
+                return False
+
+            elif action == "switch_window":
                 if PYAUTOGUI_AVAILABLE:
-                    WindowController.safe_hotkey("ctrl", "tab")
+                    WindowController.safe_hotkey("alt", "tab")
                     return True
                 return False
-                
+
             elif action == "show_desktop":
                 if PYAUTOGUI_AVAILABLE:
                     WindowController.safe_hotkey("win", "d")
                     return True
                 return False
-                
+
             elif action == "open_task_manager":
-                # Launch taskmgr directly rather than relying on hotkeys which can be blocked
                 import subprocess
                 subprocess.Popen("taskmgr", shell=True)
                 return True
-                
+
             else:
-                logger.log_error(f"Unknown window action requested: {action}")
+                logger.log_error(f"Invalid window action: {action}")
                 return False
-                
+
         except Exception as e:
             logger.log_error(f"Window controller failed during action '{action}': {e}")
             return False

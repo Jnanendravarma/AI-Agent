@@ -44,3 +44,71 @@ class AppController:
         except Exception as e:
             logger.log_error(f"Error checking app status for {process_name}: {e}")
             return False
+
+    # --- Dedicated handlers for specific applications to avoid overlapping logic ---
+
+    @staticmethod
+    def open_chrome() -> bool:
+        """Explicit handler to launch Google Chrome."""
+        logger.log_command("open_chrome", "Success", "Executing dedicated Chrome launch")
+        return AppController.open_app("start chrome")
+
+    @staticmethod
+    def close_chrome() -> bool:
+        """Explicit handler to terminate all Google Chrome processes."""
+        from controllers.process_manager import ProcessManager
+        logger.log_command("close_chrome", "Success", "Executing dedicated Chrome close")
+        return ProcessManager.kill_process_by_name("chrome.exe")
+
+    @staticmethod
+    def open_edge() -> bool:
+        """Explicit handler to launch Microsoft Edge."""
+        logger.log_command("open_edge", "Success", "Executing dedicated Edge launch")
+        return AppController.open_app("start msedge")
+
+    @staticmethod
+    def close_edge() -> bool:
+        """Explicit handler to terminate all Microsoft Edge processes."""
+        from controllers.process_manager import ProcessManager
+        logger.log_command("close_edge", "Success", "Executing dedicated Edge close")
+        return ProcessManager.kill_process_by_name("msedge.exe")
+
+    @staticmethod
+    def open_vscode() -> bool:
+        """Explicit handler to launch Visual Studio Code."""
+        logger.log_command("open_vscode", "Success", "Executing dedicated VS Code launch")
+        return AppController.open_app("code")
+
+    @staticmethod
+    def close_vscode() -> bool:
+        """Explicit handler to terminate VS Code."""
+        from controllers.process_manager import ProcessManager
+        logger.log_command("close_vscode", "Success", "Executing dedicated VS Code close")
+        return ProcessManager.kill_process_by_name("Code.exe")
+
+    @staticmethod
+    def open_spotify() -> bool:
+        """Explicit handler to launch Spotify."""
+        logger.log_command("open_spotify", "Success", "Executing dedicated Spotify launch")
+        return AppController.open_app("start spotify")
+
+    @staticmethod
+    def close_spotify() -> bool:
+        """Explicit handler to terminate Spotify."""
+        from controllers.process_manager import ProcessManager
+        logger.log_command("close_spotify", "Success", "Executing dedicated Spotify close")
+        return ProcessManager.kill_process_by_name("Spotify.exe")
+
+    @staticmethod
+    def open_discord() -> bool:
+        """Explicit handler to launch Discord."""
+        logger.log_command("open_discord", "Success", "Executing dedicated Discord launch")
+        return AppController.open_app("discord")
+
+    @staticmethod
+    def close_discord() -> bool:
+        """Explicit handler to terminate Discord."""
+        from controllers.process_manager import ProcessManager
+        logger.log_command("close_discord", "Success", "Executing dedicated Discord close")
+        return ProcessManager.kill_process_by_name("Discord.exe")
+

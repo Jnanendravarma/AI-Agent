@@ -12,7 +12,7 @@ pygetwindow
 pillow
 winshell
 comtypes
-google-generativeai
+google-genai
 python-dotenv
 pypdf
 azure-cognitiveservices-speech

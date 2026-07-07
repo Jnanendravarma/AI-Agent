@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Desktop Assistant - Dashboard</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-grad: radial-gradient(circle at top, #161a29 0%, #0a0d16 100%);
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --glow-green: #00e676;
+            --glow-blue: #2979ff;
+            --glow-red: #ff1744;
+            --glow-purple: #d500f9;
+            --text-color: #f1f3f9;
+            --text-muted: #8b9bb4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: var(--bg-grad);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 2rem;
+        }
+
+        /* Glassmorphism card styles */
+        .glass-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-4px);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-weight: 800;
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #2979ff, #d500f9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px currentcolor;
+        }
+
+        .dot.online { color: var(--glow-green); background-color: var(--glow-green); }
+        .dot.offline { color: var(--glow-red); background-color: var(--glow-red); }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .large-card {
+            grid-column: span 3;
+        }
+
+        .small-card {
+            grid-column: span 1;
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .large-card, .small-card {
+                grid-column: span 2;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            .large-card, .small-card {
+                grid-column: span 1;
+            }
+        }
+
+        /* Stat Widget */
+        .stat-widget {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .stat-widget h3 {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-widget .value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--text-color);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            height: 6px;
+            border-radius: 10px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            width: 0%;
+            transition: width 1s ease-in-out;
+        }
+
+        .fill-cpu { background: linear-gradient(90deg, #00f2fe, #4facfe); }
+        .fill-ram { background: linear-gradient(90deg, #f35588, #ff6b6b); }
+        .fill-disk { background: linear-gradient(90deg, #d500f9, #7000ff); }
+
+        /* Chart container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        /* Log / History list */
+        .log-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 380px;
+            overflow-y: auto;
+        }
+
+        .log-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .log-item .time {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .log-item .command {
+            font-weight: 600;
+        }
+
+        .log-item .badge {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 30px;
+            font-weight: bold;
+        }
+
+        .badge-success { background: rgba(0, 230, 118, 0.15); color: var(--glow-green); }
+        .badge-failed { background: rgba(255, 23, 68, 0.15); color: var(--glow-red); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>
+            <h1>AI Assistant Dashboard</h1>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Real-time system diagnostics and automation logging</p>
+        </div>
+        <div style="display: flex; gap: 15px;">
+            <div class="status-badge">
+                <span class="dot online" id="status-dot"></span>
+                <span id="status-text">Connecting...</span>
+            </div>
+            <div class="status-badge">
+                <span id="mode-text">Automation Mode</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard-grid">
+        <!-- CPU Card -->
+        <div class="glass-card stat-widget">
+            <h3>CPU Usage</h3>
+            <div class="value" id="cpu-val">0%</div>
+            <div class="progress-bar-container">
+                <div class="progress-fill fill-cpu" id="cpu-bar"></div>
+            </div>
+        </div>
+
+        <!-- RAM Card -->
+        <div class="glass-card stat-widget">
+            <h3>RAM Usage</h3>
+            <div class="value" id="ram-val">0%</div>
+            <div class="progress-bar-container">
+                <div class="progress-fill fill-ram" id="ram-bar"></div>
+            </div>
+        </div>
+
+        <!-- Disk Card -->
+        <div class="glass-card stat-widget">
+            <h3>Disk Space</h3>
+            <div class="value" id="disk-val">0%</div>
+            <div class="progress-bar-container">
+                <div class="progress-fill fill-disk" id="disk-bar"></div>
+            </div>
+        </div>
+
+        <!-- Info Card -->
+        <div class="glass-card stat-widget">
+            <h3>Registered Targets</h3>
+            <div class="value" style="font-size: 1.8rem;" id="command-count">0 Lookup Patterns</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 5px;" id="discovered-count">0 discovered shortcuts</div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Charts Widget -->
+        <div class="glass-card large-card">
+            <h2 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem;">Resource Analytics</h2>
+            <div class="chart-container">
+                <canvas id="resourceChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Command History Logger -->
+        <div class="glass-card small-card">
+            <h2 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem;">Recent Commands</h2>
+            <div class="log-section" id="logs-container">
+                <div style="text-align: center; color: var(--text-muted); margin-top: 2rem;">No commands recorded.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Init Line Chart
+        const ctx = document.getElementById('resourceChart').getContext('2d');
+        const resourceChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'CPU Usage (%)',
+                        borderColor: '#2979ff',
+                        backgroundColor: 'rgba(41, 121, 255, 0.05)',
+                        borderWidth: 2,
+                        data: [],
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'RAM Usage (%)',
+                        borderColor: '#ff1744',
+                        backgroundColor: 'rgba(255, 23, 68, 0.05)',
+                        borderWidth: 2,
+                        data: [],
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: '#8b9bb4', font: { family: 'Outfit' } }
+                    }
+                },
+                scales: {
+                    y: {
+                        min: 0,
+                        max: 100,
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#8b9bb4' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#8b9bb4' }
+                    }
+                }
+            }
+        });
+
+        // Add dummy data initially
+        for (let i = 9; i >= 0; i--) {
+            const time = new Date(Date.now() - i * 3000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            resourceChart.data.labels.push(time);
+            resourceChart.data.datasets[0].data.push(0);
+            resourceChart.data.datasets[1].data.push(0);
+        }
+        resourceChart.update();
+
+        // Polling loop to fetch statistics
+        function fetchStats() {
+            fetch('/api/stats')
+                .then(res => res.json())
+                .then(data => {
+                    // Update connection state
+                    const dot = document.getElementById('status-dot');
+                    const statusText = document.getElementById('status-text');
+                    if (data.online) {
+                        dot.className = "dot online";
+                        statusText.innerText = "Online";
+                    } else {
+                        dot.className = "dot offline";
+                        statusText.innerText = "Offline Mode";
+                    }
+
+                    // Update UI text values
+                    document.getElementById('cpu-val').innerText = Math.round(data.cpu) + "%";
+                    document.getElementById('ram-val').innerText = Math.round(data.ram) + "%";
+                    document.getElementById('disk-val').innerText = Math.round(data.disk) + "%";
+                    document.getElementById('mode-text').innerText = data.system_status;
+                    document.getElementById('command-count').innerText = data.command_patterns + " Lookup Patterns";
+                    document.getElementById('discovered-count').innerText = data.discovered_apps + " discovered applications";
+
+                    // Update Bar Widths
+                    document.getElementById('cpu-bar').style.width = data.cpu + "%";
+                    document.getElementById('ram-bar').style.width = data.ram + "%";
+                    document.getElementById('disk-bar').style.width = data.disk + "%";
+
+                    // Update Chart Data
+                    const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                    resourceChart.data.labels.shift();
+                    resourceChart.data.labels.push(nowStr);
+                    
+                    resourceChart.data.datasets[0].data.shift();
+                    resourceChart.data.datasets[0].data.push(data.cpu);
+                    
+                    resourceChart.data.datasets[1].data.shift();
+                    resourceChart.data.datasets[1].data.push(data.ram);
+                    
+                    resourceChart.update();
+
+                    // Render Logs
+                    const logsContainer = document.getElementById('logs-container');
+                    if (data.last_commands && data.last_commands.length > 0) {
+                        logsContainer.innerHTML = '';
+                        // Render in reverse to show latest on top
+                        [...data.last_commands].reverse().forEach(item => {
+                            const date = item.timestamp.split(' ')[1] || item.timestamp;
+                            const badgeClass = item.result.toLowerCase() === 'success' ? 'badge-success' : 'badge-failed';
+                            
+                            const div = document.createElement('div');
+                            div.className = 'log-item';
+                            div.innerHTML = `
+                                <div>
+                                    <div class="command">"${item.command}"</div>
+                                    <div class="time">${date}</div>
+                                </div>
+                                <span class="badge ${badgeClass}">${item.result}</span>
+                            `;
+                            logsContainer.appendChild(div);
+                        });
+                    } else {
+                        logsContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); margin-top: 2rem;">No commands recorded.</div>';
+                    }
+                })
+                .catch(err => {
+                    console.error("Dashboard server unreachable:", err);
+                    document.getElementById('status-dot').className = "dot offline";
+                    document.getElementById('status-text').innerText = "Disconnected";
+                });
+        }
+
+        // Poll every 2 seconds
+        setInterval(fetchStats, 2000);
+        fetchStats();
+    </script>
+</body>
+</html>
