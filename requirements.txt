@@ -17,3 +17,5 @@ python-dotenv
 pypdf
 azure-cognitiveservices-speech
 elevenlabs
+pystray
+pywin32
